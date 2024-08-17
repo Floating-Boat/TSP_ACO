@@ -66,7 +66,7 @@ def ant_colony_optimization(distance_matrix, num_ants, num_iterations, alpha=1.0
     :param beta: β参数，启发函数因子
     :param evaporation_rate: 信息素挥发率
     :param Q: 信息素增强因子
-    :return: 最佳路线和长度, 每一轮的最佳距离列表
+    :return: 最佳路线和长度, 每一轮的最佳距离列表, 每一轮的平均距离列表
     """
     # 初始化信息素矩阵，并根据边的长度进行调整
     num_cities = len(distance_matrix)
@@ -87,6 +87,7 @@ def ant_colony_optimization(distance_matrix, num_ants, num_iterations, alpha=1.0
     best_tour = None
     best_distance = float('inf')
     best_distances = []  # 用于记录每一轮的最佳距离
+    average_distances = []  # 用于记录每一轮的平均距离
 
     for iteration in range(num_iterations):
         all_tours = []
@@ -137,6 +138,7 @@ def ant_colony_optimization(distance_matrix, num_ants, num_iterations, alpha=1.0
         # 在每一轮迭代中使用2-opt优化最佳路径
         best_tour, best_distance = two_opt(best_tour, distance_matrix)
         best_distances.append(best_distance)  # 记录每一轮的最佳距离
+        average_distances.append(sum(all_distances) / len(all_distances))  # 记录每一轮的平均距离
 
         # 信息素更新
         pheromone = [[(1 - evaporation_rate) * pheromone[i][j] for j in range(num_cities)] for i in range(num_cities)]
@@ -146,7 +148,7 @@ def ant_colony_optimization(distance_matrix, num_ants, num_iterations, alpha=1.0
                 pheromone[tour[i]][tour[i + 1]] += Q / distance
             pheromone[tour[-1]][tour[0]] += Q / distance
 
-    return best_tour, best_distance, best_distances
+    return best_tour, best_distance, best_distances, average_distances
 
 
 # 2-opt算法来优化路径
@@ -188,18 +190,21 @@ def two_opt(tour, distance_matrix):
 
 
 # 绘制收敛程度图
-def plot_convergence(best_distances, file_name, output_folder):
+def plot_convergence(best_distances, average_distances, file_name, output_folder):
     """
     绘制收敛程度图
     :param best_distances: 每一轮的最佳距离列表
+    :param average_distances: 每一轮的平均距离列表
     :param file_name: 文件名
     :param output_folder: 输出文件夹
     """
     plt.figure(figsize=(12, 6))
-    plt.plot(best_distances, marker='o', linestyle='-', color='b')
+    plt.plot(best_distances, marker='o', linestyle='-', color='b', label='Best Distance')
+    plt.plot(average_distances, marker='x', linestyle='--', color='r', label='Average Distance')
     plt.title(f'Convergence of Ant Colony Optimization ({file_name})')
     plt.xlabel('Iteration')
-    plt.ylabel('Best Distance')
+    plt.ylabel('Distance')
+    plt.legend()
     plt.grid(True)
     plt.savefig(os.path.join(output_folder, f'{file_name}.png'))
     plt.close()
@@ -208,7 +213,7 @@ def plot_convergence(best_distances, file_name, output_folder):
 # 处理输入文件夹中的所有TSP文件
 def process_tsp_files(input_folder, output_folder):
     tsp_folder = os.path.join(input_folder, "tsp")
-    tour_folder = os.path.join(output_folder, "tour_opt2_100_200")
+    tour_folder = os.path.join(output_folder, "tour_opt2_pre_100_250")
 
     if not os.path.exists(tour_folder):
         os.makedirs(tour_folder)
@@ -221,8 +226,8 @@ def process_tsp_files(input_folder, output_folder):
             print(f"{file_name} 开始处理")
 
             # 蚁群算法找到初步的最佳路径
-            best_tour, best_distance, best_distances = ant_colony_optimization(distance_matrix, num_ants=100,
-                                                                               num_iterations=200)
+            best_tour, best_distance, best_distances, average_distances = ant_colony_optimization(distance_matrix, num_ants=100,
+                                                                                               num_iterations=250)
 
             # 创建子文件夹
             base_name = os.path.splitext(file_name)[0]
@@ -243,7 +248,7 @@ def process_tsp_files(input_folder, output_folder):
                 f.write("-1\n")
 
             # 绘制收敛程度图
-            plot_convergence(best_distances, base_name, output_folder_path)
+            plot_convergence(best_distances, average_distances, base_name, output_folder_path)
 
             print(f"{file_name} 处理完成")
 

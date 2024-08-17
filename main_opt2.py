@@ -230,11 +230,11 @@ def process_tsp_files(input_folder, output_folder):
                 f.write(f"COMMENT : Optimal tour for {file_name}\n")
                 f.write("TYPE : TOUR\n")
                 f.write(f"DIMENSION : {len(best_tour)}\n")
+                f.write(f"Total Length: {best_distance}\n")
                 f.write("TOUR_SECTION\n")
                 for city in best_tour:
                     f.write(f"{city + 1}\n")
                 f.write("-1\n")
-                f.write(f"Total Length: {best_distance}\n")
                 f.write("EOF\n")
 
             # 绘制收敛程度图并保存

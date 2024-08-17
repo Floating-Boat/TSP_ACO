@@ -208,7 +208,7 @@ def plot_convergence(best_distances, file_name, output_folder):
 # 处理输入文件夹中的所有TSP文件
 def process_tsp_files(input_folder, output_folder):
     tsp_folder = os.path.join(input_folder, "tsp")
-    tour_folder = os.path.join(output_folder, "tour_opt2_pre_50")
+    tour_folder = os.path.join(output_folder, "tour_opt2_100_200")
 
     if not os.path.exists(tour_folder):
         os.makedirs(tour_folder)
@@ -221,8 +221,8 @@ def process_tsp_files(input_folder, output_folder):
             print(f"{file_name} 开始处理")
 
             # 蚁群算法找到初步的最佳路径
-            best_tour, best_distance, best_distances = ant_colony_optimization(distance_matrix, num_ants=50,
-                                                                               num_iterations=50)
+            best_tour, best_distance, best_distances = ant_colony_optimization(distance_matrix, num_ants=100,
+                                                                               num_iterations=200)
 
             # 创建子文件夹
             base_name = os.path.splitext(file_name)[0]

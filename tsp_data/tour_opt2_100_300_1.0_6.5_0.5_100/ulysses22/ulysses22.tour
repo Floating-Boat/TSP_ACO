@@ -1,0 +1,30 @@
+NAME : ulysses22.tsp
+COMMENT : Optimal tour for ulysses22.tsp
+TYPE : TOUR
+DIMENSION : 22
+Total Length: 75.50881770213446
+TOUR_SECTION
+1
+3
+2
+17
+4
+18
+22
+8
+14
+13
+12
+7
+6
+15
+5
+11
+9
+10
+19
+20
+21
+16
+-1
+EOF

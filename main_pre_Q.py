@@ -134,8 +134,6 @@ def ant_colony_optimization(distance_matrix, num_ants, num_iterations, alpha=1.0
                 best_tour = tour
                 best_distance = total_distance
 
-        # 在每一轮迭代中使用2-opt优化最佳路径
-        best_tour, best_distance = two_opt(best_tour, distance_matrix)
         best_distances.append(best_distance)  # 记录每一轮的最佳距离
         average_distances.append(sum(all_distances) / len(all_distances))  # 记录每一轮的平均距离
 
@@ -151,44 +149,6 @@ def ant_colony_optimization(distance_matrix, num_ants, num_iterations, alpha=1.0
         Q *= (1 + iteration / num_iterations)  # 随着迭代增加信息素放置量逐渐增多
 
     return best_tour, best_distance, best_distances, average_distances
-
-
-# 2-opt算法来优化路径
-def two_opt(tour, distance_matrix):
-    """
-    2-opt优化算法
-    :param tour: 初始路径
-    :param distance_matrix: 城市距离矩阵
-    :return: 优化后的路径和总距离
-    """
-    def calculate_total_distance(tour):
-        return sum(distance_matrix[tour[i]][tour[i + 1]] for i in range(len(tour) - 1)) + distance_matrix[tour[-1]][tour[0]]
-
-    def reverse_segment(tour, i, k):
-        while i < k:
-            tour[i], tour[k] = tour[k], tour[i]
-            i += 1
-            k -= 1
-
-    best_tour = tour[:]
-    best_distance = calculate_total_distance(best_tour)
-    improvement = True
-
-    while improvement:
-        improvement = False
-        for i in range(1, len(best_tour) - 1):
-            for k in range(i + 1, len(best_tour)):
-                if k - i == 1:
-                    continue
-                new_tour = best_tour[:]
-                reverse_segment(new_tour, i, k - 1)
-                new_distance = calculate_total_distance(new_tour)
-                if new_distance < best_distance:
-                    best_tour = new_tour
-                    best_distance = new_distance
-                    improvement = True
-
-    return best_tour, best_distance
 
 
 # 绘制收敛程度图
@@ -215,7 +175,7 @@ def plot_convergence(best_distances, average_distances, file_name, output_folder
 # 处理输入文件夹中的所有TSP文件
 def process_tsp_files(input_folder, output_folder):
     tsp_folder = os.path.join(input_folder, "tsp")
-    tour_folder = os.path.join(output_folder, "tour_opt2_pre_Q_100_300_1.0_6.5_0.1_100")
+    tour_folder = os.path.join(output_folder, "tour_pre_Q_100_300_1.0_6.5_0.1_100")
 
     if not os.path.exists(tour_folder):
         os.makedirs(tour_folder)

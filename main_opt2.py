@@ -55,7 +55,7 @@ def read_tsp_file(file_path):
 
 
 # 蚁群算法来解决TSP问题
-def ant_colony_optimization(distance_matrix, num_ants, num_iterations, alpha=1.0, beta=5.0, evaporation_rate=0.5, Q=100):
+def ant_colony_optimization(distance_matrix, num_ants, num_iterations, alpha=2.0, beta=5.5, evaporation_rate=0.5, Q=100):
     """
     蚁群算法实现函数
     :param distance_matrix: 城市距离矩阵
@@ -201,7 +201,7 @@ def plot_convergence(best_distances, average_distances, file_name, output_folder
 # 处理输入文件夹中的所有TSP文件
 def process_tsp_files(input_folder, output_folder):
     tsp_folder = os.path.join(input_folder, "tsp")
-    tour_folder = os.path.join(output_folder, "tour_opt2_100_300")
+    tour_folder = os.path.join(output_folder, "tour_opt2_100_300_2.0_5.5_0.5_100")
 
     if not os.path.exists(tour_folder):
         os.makedirs(tour_folder)
